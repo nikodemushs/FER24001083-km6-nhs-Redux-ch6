@@ -182,7 +182,7 @@ const Items = () => {
             key={itemDetails?.id}
             className="relative flex flex-col items-center cursor-pointer shadow-lg hover:scale-105 duration-300"
             onClick={() => {
-              navigate("/item-detail", { state: { id: itemDetails?.id } });
+              navigate("/item-detail");
               dispatch(setItemId(itemDetails.id));
             }}
           >

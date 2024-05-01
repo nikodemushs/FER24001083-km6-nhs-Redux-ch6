@@ -21,7 +21,6 @@ const DotaDB = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const heroes = useSelector((state) => state.data.heroes);
-  console.log("heroes :>> ", heroes);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -55,7 +54,7 @@ const DotaDB = () => {
       }
     })
     .filter((hero) =>
-      hero.localized_name.toLowerCase().includes(searchTerm.toLowerCase())
+      hero?.localized_name?.toLowerCase().includes(searchTerm?.toLowerCase())
     )
     .sort((a, b) => {
       if (sortOrder === "asc") {

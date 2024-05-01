@@ -3,67 +3,28 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { PiArrowsDownUpBold } from "react-icons/pi";
-import {
-  FaSortAmountDown,
-  FaSortAmountUp,
-  FaSortAlphaDown,
-  FaSortAlphaUp,
-} from "react-icons/fa";
+import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import { getMatchups, getMatchupDetails } from "./redux/actions/dataAction";
+import { useDispatch, useSelector } from "react-redux";
+import { setHeroId } from "./redux/reducers/dataReducer";
 
 const HeroMatchup = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [matchups, setMatchups] = useState([]);
-  const [heroesData, setHeroesData] = useState({});
+  const matchups = useSelector((state) => state.data.matchups);
+  const heroesData = useSelector((state) => state.data.matchupDetail);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortWin, setSortWin] = useState("desc");
-  const [sortName, setSortName] = useState("asc");
-
   const [isActive, setIsActive] = useState(false);
-  const [isActive2, setIsActive2] = useState(false);
-
-  // Function to fetch matchup data
-  const fetchMatchupData = async () => {
-    try {
-      const response = await axios.get(
-        `https://api.opendota.com/api/heroes/${location.state.id}/matchups`,
-        { headers: { accept: "application/json" } }
-      );
-      console.log("response data", response.data);
-      setMatchups(response.data);
-
-      // Fetch hero details for each matchup hero
-      const heroIds = response.data.map((matchups) => matchups.hero_id);
-      await fetchHeroDetails(heroIds);
-    } catch (error) {
-      console.error("Error fetching matchup data", error);
-    }
-  };
-
-  // Function to fetch hero details
-  const fetchHeroDetails = async () => {
-    try {
-      const response = await axios.get(
-        `https://api.opendota.com/api/heroStats`,
-        { headers: { accept: "application/json" } }
-      );
-      console.log("hero details", response.data);
-      // Create a map of hero details using hero ID as key
-      const heroesMap = {};
-      response.data.forEach((hero) => {
-        heroesMap[hero.id] = hero;
-      });
-      setHeroesData(heroesMap);
-    } catch (error) {
-      console.error("Error fetching hero details", error);
-    }
-  };
 
   useEffect(() => {
-    fetchMatchupData();
-    console.log("hero data", heroesData);
-  }, [location.state.id]);
+    dispatch(getMatchups());
+  }, []);
+
+  useEffect(() => {
+    dispatch(getMatchupDetails());
+  }, []);
 
   const trueheroId = location.state.id;
   const trueheroData = heroesData[trueheroId] || {};
@@ -78,7 +39,6 @@ const HeroMatchup = () => {
   };
 
   let filteredMatchups = matchups
-
     .filter((matchup) =>
       heroesData[matchup.hero_id]?.localized_name
         .toLowerCase()
@@ -202,7 +162,8 @@ const HeroMatchup = () => {
               key={matchup?.hero_id}
               className="relative flex flex-col items-center cursor-pointer shadow-lg hover:scale-105 duration-300"
               onClick={() => {
-                navigate("/hero-detail", { state: { id: heroId } });
+                navigate("/hero-detail");
+                dispatch(setHeroId(heroId));
               }}
             >
               <img

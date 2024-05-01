@@ -7,6 +7,8 @@ const initialState = {
   items: [],
   itemId: null,
   itemDetail: null,
+  matchups: [],
+  matchupDetail: {},
 };
 
 const dataSlicer = createSlice({
@@ -31,6 +33,12 @@ const dataSlicer = createSlice({
     setItemDetail: (state, action) => {
       state.itemDetail = action.payload;
     },
+    setMatchups: (state, action) => {
+      state.matchups = action.payload;
+    },
+    setMatchupDetail: (state, action) => {
+      state.matchupDetail = action.payload;
+    },
   },
 });
 
@@ -41,6 +49,8 @@ export const {
   setItems,
   setItemId,
   setItemDetail,
+  setMatchups,
+  setMatchupDetail,
 } = dataSlicer.actions;
 
 export default dataSlicer.reducer;

@@ -9,12 +9,15 @@ import { FaCoins } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { getItemDetail } from "./redux/actions/dataAction";
 import { useDispatch, useSelector } from "react-redux";
+import { setItemId } from "./redux/reducers/dataReducer";
 
 const ItemDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const detail = useSelector((state) => state.data.itemDetail);
   console.log("reduxDetail :>> ", detail);
+  const idState = useSelector((state) => state.data.itemId);
+  console.log("reduxID :>> ", idState);
   let location = useLocation();
   console.log("location", location);
 
@@ -130,10 +133,11 @@ const ItemDetail = () => {
                         <div
                           onClick={() => {
                             console.log("data", data);
-                            console.log("component", component);
-                            navigate("/item-detail", {
-                              state: { id: data[0][component]?.id },
-                            });
+                            const componentId = data[0][component].id;
+                            console.log("componentId", componentId);
+                            navigate("/item-detail");
+                            dispatch(setItemId(componentId));
+                            window.location.reload();
                           }}
                           className="relative flex flex-col items-center cursor-pointer shadow-lg hover:scale-105 duration-300"
                           key={index}
