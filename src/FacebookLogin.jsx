@@ -1,16 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FacebookLogin from "@greatsumini/react-facebook-login";
+import { setToken, setUsername } from "./redux/reducers/authReducer";
+import { useDispatch } from "react-redux";
 
 function Facebook({ buttonText }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLoginSuccess = (response) => {
     console.log("Login Success!", response);
     const { accessToken } = response;
-    localStorage.setItem("login", "facebook function");
-    localStorage.setItem("token", accessToken);
-    navigate("/", { state: { token: accessToken } });
+    dispatch(setToken(accessToken));
+    navigate("/");
   };
 
   const handleLoginFailure = (error) => {
@@ -19,8 +21,8 @@ function Facebook({ buttonText }) {
 
   const handleProfileSuccess = (response) => {
     console.log("Get Profile Success!", response);
-    const profileString = JSON.stringify(response);
-    localStorage.setItem("profile", profileString);
+
+    dispatch(setUsername(response.name));
   };
 
   return (

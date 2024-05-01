@@ -4,20 +4,11 @@ import React, { useState, useEffect } from "react";
 import { GiQuickMan, GiSharpAxe } from "react-icons/gi";
 import { IoLogInOutline } from "react-icons/io5";
 import { getAllHeroes } from "./redux/actions/dataAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export function Home() {
-  const [items, setItems] = useState("");
-  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
 
-  useEffect(() => {
-    const items = localStorage.getItem("token");
-    if (items) {
-      setItems(items);
-    }
-  }, []);
-
-  console.log("home screen token", items);
   return (
     <div className="flex flex-col items-center text-center justify-center bg-image h-full min-h-screen">
       <div className="  w-full h-full flex flex-col items-center text-center justify-center">
@@ -57,7 +48,7 @@ export function Home() {
               </div>
             </a>
           </div>
-          {!items && (
+          {!token && (
             <div>
               <p class="text-lg font-normal text-white px-4 md:px-8">
                 Login to access contents.

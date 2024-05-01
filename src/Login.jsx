@@ -15,78 +15,35 @@ import GoogleLogin from "./GoogleLogin";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin as Google } from "@react-oauth/google";
 import Facebook from "./FacebookLogin";
+import { login } from "./redux/actions/authAction";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearState,
+  setEmailData,
+  setPasswordData,
+  setShowPassword,
+} from "./redux/reducers/authReducer";
 
 export default function Login() {
   const navigate = useNavigate();
-
-  const [emailData, setemailData] = useState("");
-  const [passwordData, setpasswordData] = useState("");
-  const [data, setData] = useState([]);
-  const [items, setItems] = useState("");
-  const [message, setMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  async function login() {
-    try {
-      const responseLogin = await axios.post(
-        "https://shy-cloud-3319.fly.dev/api/v1/auth/login",
-        {
-          email: emailData,
-          password: passwordData,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setData(responseLogin?.data?.data);
-      if (responseLogin?.status === 200) {
-        localStorage.setItem("login", "login");
-        localStorage.setItem("token", responseLogin?.data?.data?.token);
-        navigate("/", {
-          state: { token: responseLogin?.data?.data?.token },
-        });
-      } else {
-        alert("password atau username salah");
-      }
-      setMessage("Login successful"); // Set welcome message
-    } catch (error) {
-      setMessage("Login failed because " + error.response.data.message);
-      console.error("An error occurred:", error);
-    }
-  }
-
-  useEffect(() => {
-    if (localStorage.getItem("token") !== null) {
-      alert("Tidak perlu login lagi, karena token kamu masih aktif kok");
-      navigate("/");
-    }
-  }, []);
-
-  console.log("data", data);
-  console.log("localStorage ", localStorage.getItem("token"));
+  const dispatch = useDispatch();
+  console.log("navigate :>> ", navigate);
+  const emailData = useSelector((state) => state.auth.emailData);
+  const passwordData = useSelector((state) => state.auth.passwordData);
+  const message = useSelector((state) => state.auth.message);
+  console.log("message :>> ", message);
+  const showPassword = useSelector((state) => state.auth.showPassword);
 
   const handleEmail = (event) => {
-    setemailData(event.target.value);
+    dispatch(setEmailData(event.target.value));
   };
 
   const handlePassword = (event) => {
-    setpasswordData(event.target.value);
+    dispatch(setPasswordData(event.target.value));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    login();
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setpasswordData("");
-    setemailData("");
-    setData([]);
-    setItems("");
   };
 
   return (
@@ -132,7 +89,7 @@ export default function Login() {
                     className="mr-3"
                     onClick={(e) => {
                       e.preventDefault();
-                      setShowPassword(!showPassword);
+                      dispatch(setShowPassword(!showPassword));
                     }}
                   >
                     {showPassword ? (
@@ -146,6 +103,10 @@ export default function Login() {
               <div className="flex flex-col gap-5 mt-5 items-center">
                 <button
                   type="submit"
+                  onClick={async () => {
+                    const response = await dispatch(login(navigate));
+                    console.log("response :>> ", response);
+                  }}
                   className="flex border-2 font-semibold items-center justify-center w-96 h-10 border-gray-300 rounded-lg p-2 bg-white text-black hover:bg-gray-300 hover:text-black font-xl"
                 >
                   Login
@@ -184,6 +145,9 @@ export default function Login() {
               <span class="block  text-white sm:text-center mt-5 font-semibold ">
                 Dont have an account?{" "}
                 <a
+                  onClick={() => {
+                    dispatch(clearState());
+                  }}
                   href="/register"
                   class="hover:underline  text-blue-400 hover:text-blue-500"
                 >

@@ -12,64 +12,35 @@ import { useNavigate } from "react-router-dom";
 import GoogleLogin from "./GoogleLogin";
 import Facebook from "./FacebookLogin";
 import { FaFacebookF } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setEmailData,
+  setPasswordData,
+  setShowPassword,
+  setNameData,
+} from "./redux/reducers/authReducer";
+import { register } from "./redux/actions/authAction";
 
 export default function Register() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const emailData = useSelector((state) => state.auth.emailData);
+  const passwordData = useSelector((state) => state.auth.passwordData);
+  const nameData = useSelector((state) => state.auth.nameData);
+  const message = useSelector((state) => state.auth.message);
 
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [data, setData] = useState([]);
-  const [items, setItems] = useState("");
-  const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  async function register() {
-    try {
-      const responseRegister = await axios.post(
-        "https://shy-cloud-3319.fly.dev/api/v1/auth/register",
-        {
-          email: email,
-          name: name,
-          password: password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("jsonRegister", responseRegister.data);
-
-      if (responseRegister.status === 201) {
-        setMessage("Register successful");
-        localStorage.setItem("login", "login");
-        localStorage.setItem("token", responseRegister.data?.data?.token);
-        navigate("/", {
-          state: { token: responseRegister.data?.data?.token },
-        });
-      } else {
-        setMessage(
-          "Register failed. Please check your credentials. " +
-            responseRegister.data.message
-        );
-      }
-    } catch (error) {
-      setMessage("Register failed because " + error.response.data.message);
-      console.error("An error occurred:", error);
-    }
-  }
   const handleEmail = (event) => {
-    setEmail(event.target.value);
+    dispatch(setEmailData(event.target.value));
   };
 
   const handleName = (event) => {
-    setName(event.target.value);
+    dispatch(setNameData(event.target.value));
   };
 
   const handlePassword = (event) => {
-    setPassword(event.target.value);
+    dispatch(setPasswordData(event.target.value));
   };
 
   const handleSubmit = (event) => {
@@ -77,14 +48,7 @@ export default function Register() {
     register();
   };
 
-  useEffect(() => {
-    const items = localStorage.getItem("token");
-    if (items) {
-      setItems(items);
-    }
-  }, []);
-
-  console.log("items", items);
+  
 
   return (
     <div className="flex flex-col items-center text-center justify-center bg-image h-full min-h-screen">
@@ -105,7 +69,7 @@ export default function Register() {
                   <input
                     type="text"
                     placeholder="Email"
-                    value={email}
+                    value={emailData}
                     onChange={handleEmail}
                     className=" bg-transparent border-none outline-none  p-2 m-2 flex-grow "
                   />
@@ -119,7 +83,7 @@ export default function Register() {
                   <input
                     type={showPassword ? "text" : "password"} // Ternary operator to toggle between "text" and "password"
                     placeholder="Password"
-                    value={password}
+                    value={passwordData}
                     onChange={handlePassword}
                     className="bg-transparent border-none outline-none p-2 m-2 flex-grow"
                   />
@@ -142,7 +106,7 @@ export default function Register() {
                   <input
                     type="text"
                     placeholder="Name"
-                    value={name}
+                    value={nameData}
                     onChange={handleName}
                     className=" bg-transparent border-none outline-none  p-2 m-2 flex-grow "
                   />
@@ -150,6 +114,10 @@ export default function Register() {
               </div>
               <div className="flex flex-col gap-5 mt-5 items-center">
                 <button
+                  onClick={async () => {
+                    const response = await dispatch(register());
+                    console.log("response :>> ", response);
+                  }}
                   type="submit"
                   className="flex border-2 font-semibold items-center justify-center w-96 h-10 border-gray-300 rounded-lg p-2 bg-white text-black hover:bg-gray-300 hover:text-black font-xl"
                 >
@@ -189,6 +157,9 @@ export default function Register() {
               <span class="block  text-white sm:text-center mt-5 font-semibold ">
                 Already have an account?{" "}
                 <a
+                  onClick={() => {
+                    dispatch(clearState());
+                  }}
                   href="/login"
                   class="hover:underline  text-blue-400 hover:text-blue-500"
                 >

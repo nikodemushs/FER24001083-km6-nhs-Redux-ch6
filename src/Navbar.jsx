@@ -8,72 +8,26 @@ import {
   IoChevronUpOutline,
   IoLogOutOutline,
 } from "react-icons/io5";
-
 import { jwtDecode } from "jwt-decode";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "./redux/reducers/authReducer";
+import { getUserData } from "./redux/actions/authAction";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const username = useSelector((state) => state.auth.username);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [items, setItems] = useState("");
   const dropdownRef = useRef(null);
-
-  async function getUserData() {
-    if (localStorage.getItem("login") === "google component") {
-      const decoded = jwtDecode(localStorage.getItem("token"));
-      if (decoded?.exp < new Date() / 1000) {
-        // alert("token expire");
-      }
-      console.log("decoded", decoded);
-      setData(decoded);
-    } else if (
-      localStorage.getItem("login") === "login" ||
-      localStorage.getItem("login") === "google function"
-    ) {
-      try {
-        const res = await fetch(
-          "https://shy-cloud-3319.fly.dev/api/v1/auth/me",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const resJson = await res?.json();
-        if (res?.status === 401) {
-          // alert("token expire");
-          return;
-        }
-        console.log("Data", resJson);
-        setData(resJson);
-      } catch (error) {
-        // alert("token expire");
-        console.log("error ", error);
-      }
-    } else if (localStorage.getItem("login") === "facebook function") {
-      const profile = localStorage.getItem("profile");
-      console.log("Data", profile);
-      setData(JSON.parse(profile)); // Parse the stored string back to an object
-    }
-  }
+  const token = useSelector((state) => state.auth.token);
+  console.log("token :>> ", token);
+  const cekState = useSelector((state) => state);
+  console.log("cekState :>> ", cekState);
 
   useEffect(() => {
-    const items = localStorage.getItem("token");
-    if (items) {
-      setItems(items);
-    }
+    dispatch(getUserData());
   }, []);
-
-  useEffect(() => {
-    if (items) {
-      getUserData();
-    }
-  }, [items]);
-  console.log("data", data);
-  console.log("token", items);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -89,22 +43,15 @@ function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    // Show confirmation dialog
     setShowConfirmation(true);
   };
 
   const confirmLogout = () => {
-    // Perform logout actions
-    localStorage.removeItem("token");
-    setData([]);
-    setItems("");
-    navigate("/");
+    dispatch(logout());
     setShowConfirmation(false);
-    window.location.reload();
   };
 
   const cancelLogout = () => {
-    // Hide confirmation dialog
     setShowConfirmation(false);
   };
 
@@ -141,21 +88,21 @@ function Navbar() {
                 Items
               </p>
             </a>
-            {!items && (
+            {!token && (
               <a href="/login">
                 <p className="text font-semibold p-1 px-2 text-white cursor-pointer rounded-lg hover:text-primary hover:scale-105 hover:bg-white hover:text-black">
                   Login
                 </p>
               </a>
             )}
-            {items && (
+            {token && (
               <div className="relative" ref={dropdownRef}>
                 <div
                   className="flex items-center gap-2 text font-semibold p-1 px-2 cursor-pointer rounded-lg hover:text-primary hover:scale-105 bg-white"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <CgProfile size={22} />
-                  {`${data?.data?.name || data?.name || data?.name} `}
+                  {`${username} `}
                   {isDropdownOpen ? (
                     <IoChevronUpOutline size={22} />
                   ) : (
