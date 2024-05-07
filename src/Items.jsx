@@ -17,14 +17,15 @@ import { FaWandMagicSparkles } from "react-icons/fa6";
 import { PiArrowsDownUpBold } from "react-icons/pi";
 import { getAllItems } from "./redux/actions/dataAction";
 import { useDispatch, useSelector } from "react-redux";
-import { setItemId } from "./redux/reducers/dataReducer";
+import { setItemId, setSearchTerm } from "./redux/reducers/dataReducer";
 
 const Items = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const items = useSelector((state) => state.data.items);
   console.log("reduxItems :>> ", items);
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchTerm = useSelector((state) => state.data.searchTerm);
+  console.log("searchTermRedux :>> ", searchTerm);
   const [sortCost, setSortCost] = useState("desc");
   const [sortName, setSortName] = useState("asc");
   const [isActive, setIsActive] = useState(false);
@@ -32,15 +33,13 @@ const Items = () => {
 
   useEffect(() => {
     dispatch(getAllItems());
+    return () => {
+      dispatch(setSearchTerm(""));
+    };
   }, []);
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    setSearchTerm("");
+    dispatch(setSearchTerm(event.target.value));
   };
 
   let filteredItems = items
@@ -83,7 +82,7 @@ const Items = () => {
         <h1 className="pt-28 pb-5 text-4xl font-bold tracking-tight leading-tight text-white md:text-5xl lg:text-6xl">
           Pick your favorite items!{" "}
         </h1>
-        <form onSubmit={handleSearchSubmit} class="max-w-lg mx-auto ">
+        <form class="max-w-lg mx-auto ">
           <div class="flex gap-3 justify-center items-center">
             <div className="flex items-center space-x-6">
               <div

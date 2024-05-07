@@ -18,8 +18,6 @@ const ItemDetail = () => {
   console.log("reduxDetail :>> ", detail);
   const idState = useSelector((state) => state.data.itemId);
   console.log("reduxID :>> ", idState);
-  let location = useLocation();
-  console.log("location", location);
 
   useEffect(() => {
     dispatch(getItemDetail());
@@ -72,9 +70,9 @@ const ItemDetail = () => {
                   <li>Notes: {detail?.notes}</li>
                 )}
                 {((detail && detail.behavior) ||
-                  detail.mc ||
-                  detail.hc ||
-                  detail.cd) && (
+                  detail?.mc ||
+                  detail?.hc ||
+                  detail?.cd) && (
                   <div>
                     <div className="text-xl font-semibold">Behavior:</div>
                     {detail && detail.behavior && (

@@ -36,6 +36,7 @@ const authSlicer = createSlice({
       state.token = "";
       state.nameData = "";
       state.username = "";
+      window.location.reload();
     },
     setShowPassword: (state, action) => {
       state.showPassword = action.payload;

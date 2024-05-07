@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import { getMatchups, getMatchupDetails } from "./redux/actions/dataAction";
 import { useDispatch, useSelector } from "react-redux";
-import { setHeroId } from "./redux/reducers/dataReducer";
+import { setHeroId, setSearchTerm } from "./redux/reducers/dataReducer";
 
 const HeroMatchup = () => {
   const dispatch = useDispatch();
@@ -14,28 +14,29 @@ const HeroMatchup = () => {
   const location = useLocation();
   const matchups = useSelector((state) => state.data.matchups);
   const heroesData = useSelector((state) => state.data.matchupDetail);
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchTerm = useSelector((state) => state.data.searchTerm);
   const [sortWin, setSortWin] = useState("desc");
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     dispatch(getMatchups());
+    return () => {
+      dispatch(setSearchTerm(""));
+    };
   }, []);
 
   useEffect(() => {
     dispatch(getMatchupDetails());
+    return () => {
+      dispatch(setSearchTerm(""));
+    };
   }, []);
 
   const trueheroId = location.state.id;
   const trueheroData = heroesData[trueheroId] || {};
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    setSearchTerm("");
+    dispatch(setSearchTerm(event.target.value));
   };
 
   let filteredMatchups = matchups

@@ -1,11 +1,5 @@
 import axios from "axios";
-import {
-  setMessage,
-  setEmailData,
-  setPasswordData,
-  setUsername,
-  setToken,
-} from "../reducers/authReducer";
+import { setMessage, setUsername, setToken } from "../reducers/authReducer";
 
 export const login = (navigate) => async (dispatch, getState) => {
   try {
@@ -14,8 +8,8 @@ export const login = (navigate) => async (dispatch, getState) => {
     const responseLogin = await axios.post(
       "https://shy-cloud-3319.fly.dev/api/v1/auth/login",
       {
-        email: `${emailData}`,
-        password: `${passwordData}`,
+        email: emailData,
+        password: passwordData,
       },
       {
         headers: {
@@ -73,7 +67,7 @@ export const register = (navigate) => async (dispatch, getState) => {
   }
 };
 
-export const getUserData = (navigate) => async (dispatch, getState) => {
+export const getUserData = () => async (dispatch, getState) => {
   try {
     const token = getState().auth.token;
     const response = await axios.get(
@@ -97,5 +91,3 @@ export const getUserData = (navigate) => async (dispatch, getState) => {
     console.log("Error", error);
   }
 };
-
-

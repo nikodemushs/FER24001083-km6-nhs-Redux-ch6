@@ -21,7 +21,6 @@ function Facebook({ buttonText }) {
 
   const handleProfileSuccess = (response) => {
     console.log("Get Profile Success!", response);
-
     dispatch(setUsername(response.name));
   };
 

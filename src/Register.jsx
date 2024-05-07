@@ -28,8 +28,9 @@ export default function Register() {
   const passwordData = useSelector((state) => state.auth.passwordData);
   const nameData = useSelector((state) => state.auth.nameData);
   const message = useSelector((state) => state.auth.message);
+  const showPassword = useSelector((state) => state.auth.showPassword);
 
-  const [showPassword, setShowPassword] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
 
   const handleEmail = (event) => {
     dispatch(setEmailData(event.target.value));
@@ -47,8 +48,6 @@ export default function Register() {
     event.preventDefault();
     register();
   };
-
-  
 
   return (
     <div className="flex flex-col items-center text-center justify-center bg-image h-full min-h-screen">
@@ -91,7 +90,7 @@ export default function Register() {
                     className="mr-3"
                     onClick={(e) => {
                       e.preventDefault();
-                      setShowPassword(!showPassword);
+                      dispatch(setShowPassword(!showPassword));
                     }}
                   >
                     {showPassword ? (

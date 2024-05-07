@@ -14,29 +14,27 @@ import {
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { PiArrowsDownUpBold } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
-import { setHeroId } from "./redux/reducers/dataReducer";
+import { setHeroId, setSearchTerm } from "./redux/reducers/dataReducer";
 import { getAllHeroes } from "./redux/actions/dataAction";
 
 const DotaDB = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const heroes = useSelector((state) => state.data.heroes);
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchTerm = useSelector((state) => state.data.searchTerm);
   const [filter, setFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("asc");
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     dispatch(getAllHeroes());
+    return () => {
+      dispatch(setSearchTerm(""));
+    };
   }, []);
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    setSearchTerm("");
+    dispatch(setSearchTerm(event.target.value));
   };
 
   let filteredHeroes = heroes
@@ -86,7 +84,7 @@ const DotaDB = () => {
         <h1 className="pt-28 pb-5 text-4xl font-bold tracking-tight leading-tight text-white md:text-5xl lg:text-6xl">
           Pick your favorite heroes!{" "}
         </h1>
-        <form onSubmit={handleSearchSubmit} class="max-w-lg mx-auto ">
+        <form class="max-w-lg mx-auto ">
           <div class="flex flex-col justify-center items-center ">
             <div class="flex mr-[] items-center">
               <div className="flex items-center space-x-6">

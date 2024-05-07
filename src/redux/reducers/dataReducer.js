@@ -9,6 +9,7 @@ const initialState = {
   itemDetail: null,
   matchups: [],
   matchupDetail: {},
+  searchTerm: "",
 };
 
 const dataSlicer = createSlice({
@@ -39,6 +40,9 @@ const dataSlicer = createSlice({
     setMatchupDetail: (state, action) => {
       state.matchupDetail = action.payload;
     },
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
   },
 });
 
@@ -51,6 +55,7 @@ export const {
   setItemDetail,
   setMatchups,
   setMatchupDetail,
+  setSearchTerm,
 } = dataSlicer.actions;
 
 export default dataSlicer.reducer;
