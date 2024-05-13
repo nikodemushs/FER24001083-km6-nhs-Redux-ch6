@@ -16,6 +16,7 @@ import Login from "./Login";
 import Register from "./Register";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useSelector } from "react-redux";
+import AbilityDetail from "./AbilityDetail";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -47,6 +48,10 @@ export default function App() {
     {
       path: "/item-detail",
       element: isLoggedIn ? <ItemDetail /> : <Navigate to="/login" />,
+    },
+    {
+      path: "/ability-detail",
+      element: isLoggedIn ? <AbilityDetail /> : <Navigate to="/login" />,
     },
     {
       path: "/login",
